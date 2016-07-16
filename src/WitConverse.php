@@ -97,7 +97,7 @@ class WitConverse
 
         $client = new Client();
         $r = $client->request('POST', 'https://api.wit.ai/converse',$requestParams);
-        //print_r(json_decode($r->getBody(),true));
+        //dd(print_r(json_decode($r->getBody(),true)));
         return $this->nextStep(json_decode($r->getBody(),true),$userQuery);
     }
 
@@ -115,10 +115,11 @@ class WitConverse
     private function nextStep($arr,$userQuery){
         switch($arr['type']){
             case 'msg':
-                $this->actionsObject->sendMessage($arr['msg']);
+                $this->actionsObject->sendMessage($this->access_token,$this->userId,$arr['msg']);
                 return $this->replyToUser($userQuery,$this->context);
             case 'action':
                 $this->context=['json'=>$this->actionsObject->action($this->userId,$arr['action'],$this->context,$this->updateContext($arr['entities']))];
+                //dd($this->context);
                 return $this->replyToUser($userQuery,$this->context);
             case 'stop':
                 return $this->context;
