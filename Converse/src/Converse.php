@@ -8,6 +8,7 @@ class Converse
     private $token;
     private $message;
     private $userId;
+    private static $count=0;
 
     /**
      * Create a new Skeleton Instance
@@ -51,6 +52,12 @@ class Converse
 
         $client = new Client();
         $r = $client->request('POST', 'https://api.wit.ai/converse',$requestParams);
+        //if(self::$count==1){
+            echo "<pre>".(print_r(json_decode($r->getBody(),true)))."</pre>";
+        //}else{
+         //   self::$count++;
+        //}
+
         return $this->nextStep(json_decode($r->getBody(),true));
     }
 
@@ -68,10 +75,14 @@ class Converse
     private function nextStep($arr){
         switch($arr['type']){
             case 'msg':
+                $this->context=$this->updateContext($arr['entities']);
+                echo "Action : ". print_r($this->context);
                 return ['text'=>$arr['msg'],'context'=>$this->context];
+                
             case 'action':
                 $this->context=$this->updateContext($arr['entities']);
                 $this->context= $this->actionsObject->action($this->userId,$arr['action'],$this->context,array_keys($this->context));
+                echo "Action : ". print_r($this->context)."<br>";
                 return $this->resolve();
             case 'stop':
                 return ['text'=>'','context'=>$this->context];

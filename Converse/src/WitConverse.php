@@ -2,7 +2,7 @@
 
 namespace UsamaNoman\WitConverse;
 use UsamaNoman\WitConverse\Exceptions\WitConverseException;
-
+use GuzzleHttp\Client;
 /**
  * Class Diffbot
  *
@@ -21,9 +21,11 @@ class WitConverse
      * @param string|null $token The API access token, as obtained on diffbot.com/dev
      * @throws DiffbotException When no token is provided
      */
-    public function __construct($actionsObject,$token = null)
+    public function __construct($actionsObject,$userId,$access_token,$token = null)
     {
         $this->actionsObject=$actionsObject;
+        $this->access_token=$access_token;
+        $this->userId=$userId;
         if ($token === null) {
             if (self::$token === null) {
                 $msg = 'No token provided, and none is globally set. ';
@@ -70,5 +72,58 @@ class WitConverse
             throw new \InvalidArgumentException('Token "' . $token . '" is too short, and thus invalid.');
         }
         return true;
+    }
+
+    public function setContext($context){
+        $this->context=$context;
+    }
+
+    public function replyToUser($userQuery,$context){
+        $this->setContext($context);
+        $json=$this->context;
+        $requestParams= array_merge([
+            'query'=>[
+                'v'=>'20160526',
+                'session_id'=>$this->userId,
+                'q'=>$userQuery
+            ],
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept'     => 'application/json',
+                'Authorization'      => 'Bearer '.$this->instanceToken
+            ],
+            'verify' => false
+        ],$json);
+
+        $client = new Client();
+        $r = $client->request('POST', 'https://api.wit.ai/converse',$requestParams);
+        //print_r(json_decode($r->getBody(),true));
+        return $this->nextStep(json_decode($r->getBody(),true),$userQuery);
+    }
+
+    public function updateContext($arr){
+        $context=[];
+        foreach($arr as $key =>$val){
+            $context[$key]=[];
+            foreach($val as $value){
+                array_push($context[$key], $value['value']);
+            }
+        }
+        return $context;
+    }
+
+    private function nextStep($arr,$userQuery){
+        switch($arr['type']){
+            case 'msg':
+                $this->actionsObject->sendMessage($arr['msg']);
+                return $this->replyToUser($userQuery,$this->context);
+            case 'action':
+                $this->context=['json'=>$this->actionsObject->action($this->userId,$arr['action'],$this->context,$this->updateContext($arr['entities']))];
+                return $this->replyToUser($userQuery,$this->context);
+            case 'stop':
+                return $this->context;
+            case 'merge':
+                return $this->context;
+        }
     }
 }
