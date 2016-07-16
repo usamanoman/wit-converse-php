@@ -1,0 +1,40 @@
+{
+    "name": "UsamaNoman/wit-converse-php",
+    "description": "This is wit.ai converse implementation for PHP so you can start writing your wit.ai actions as soon as possible without any hassle and get a full flesh running chat bot in seconds.",
+    "keywords": [
+        "UsamaNoman",
+        "package"
+    ],
+    "homepage": "https://github.com/usamanoman/wit-converse-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Usama Noman",
+            "email": "s.usama.noman@gmail.com",
+            "homepage": "https://botsify.com",
+            "role": "Founder"
+        }
+    ],
+    "require": {
+        "php" : ">=5.5.0",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "UsamaNoman\\WitConverse\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "UsamaNoman\\WitConverse\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
