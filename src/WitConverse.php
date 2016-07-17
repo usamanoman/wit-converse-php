@@ -126,7 +126,9 @@ class WitConverse
                     return [];
                 }
             case 'action':
+                echo "<pre>" . print_r($arr) ."</pre><br>";
                 $this->context=['json'=>$this->actionsObject->action($this->userId,$arr['action'],$this->context,$this->updateContext($arr['entities']))];
+                echo "<pre>Answer:".print_r($this->context)."</pre><br>";
                 return $this->replyToUser($userQuery,$this->context);
             case 'stop':
                 return [];
