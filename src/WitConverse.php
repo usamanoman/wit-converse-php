@@ -119,7 +119,7 @@ class WitConverse
             case 'msg':
                 $this->actionsObject->sendMessage($this->access_token,$this->userId,$arr['msg']);
                 $this->msgCounter++;
-                if($this->msgCounter<8){
+                if($this->msgCounter<5){
                     return $this->replyToUser($userQuery,$this->context);
                 }else{
                     $this->msgCounter=0;
