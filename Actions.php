@@ -19,7 +19,7 @@ class Actions extends ActionMapping
         return ['mood'=>'good'];
     }
 
-    public function sendMessage($msg){
+    public function sendMessage($token,$userId,$msg){
         echo $msg."<br>";
     }
 }

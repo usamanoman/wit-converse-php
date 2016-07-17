@@ -15,6 +15,8 @@ class WitConverse
     /** @var string The instance token, settable once per new instance */
     private $instanceToken;
 
+    private $msgCounter=0;
+
     private $actionsObject;
 
     /**
@@ -116,13 +118,18 @@ class WitConverse
         switch($arr['type']){
             case 'msg':
                 $this->actionsObject->sendMessage($this->access_token,$this->userId,$arr['msg']);
-                return $this->replyToUser($userQuery,$this->context);
+                $this->msgCounter++;
+                if($this->msgCounter<8){
+                    return $this->replyToUser($userQuery,$this->context);
+                }else{
+                    $this->msgCounter=0;
+                    return [];
+                }
             case 'action':
                 $this->context=['json'=>$this->actionsObject->action($this->userId,$arr['action'],$this->context,$this->updateContext($arr['entities']))];
-                //dd($this->context);
                 return $this->replyToUser($userQuery,$this->context);
             case 'stop':
-                return $this->context;
+                return [];
             case 'merge':
                 return $this->context;
         }

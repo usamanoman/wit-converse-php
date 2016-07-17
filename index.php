@@ -7,9 +7,12 @@ require_once "Actions.php";
 use UsamaNoman\WitConverse\WitConverse;
 
 $actions=new Actions();
-$wit = new WitConverse($actions,"123a1223","token","O5XGUSYTHYXXAWFT6XGJ362EGPPQ3BVF");
+$wit = new WitConverse($actions,"123a1223","token","U3XHIL7OW5BEKJDA3TOBAKI4QOKHHT4B");
 $context=$wit->replyToUser("How are you?",[]);
-$context=$wit->replyToUser("No I am fine, thanks.",$context);
+$context=$wit->replyToUser("How are you?",$context);
+$context=$wit->replyToUser("No I am fine thanks.",[]);
+print_r($context);
+//$context=$wit->replyToUser("No I am fine, thanks.",$context);
 // $wit = new WitConverse($actions,"O5XGUSYTHYXXAWFT6XGJ362EGPPQ3BVF");
 // $context=$wit->replyToUser("asca","How are you?","123abc");
 
