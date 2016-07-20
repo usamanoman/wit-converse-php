@@ -16,6 +16,8 @@ class WitConverse
     private $instanceToken;
 
     private $msgCounter=0;
+    private $actionsCounter=0;
+    
 
     private $actionsObject;
 
@@ -126,10 +128,16 @@ class WitConverse
                     return [];
                 }
             case 'action':
-                echo "<pre>" . print_r($arr) ."</pre><br>";
+                //echo "<pre>" . print_r($arr) ."</pre><br>";
                 $this->context=['json'=>$this->actionsObject->action($this->userId,$arr['action'],$this->context,$this->updateContext($arr['entities']))];
-                echo "<pre>Answer:".print_r($this->context)."</pre><br>";
-                return $this->replyToUser($userQuery,$this->context);
+                //echo "<pre>Answer:".print_r($this->context)."</pre><br>";
+                $this->actionsCounter++;
+                if($this->actionsCounter<3){
+                    return $this->replyToUser($userQuery,$this->context);
+                }else{
+                    $this->actionsCounter=0;
+                    return [];
+                }
             case 'stop':
                 return [];
             case 'merge':
